@@ -82,6 +82,7 @@ export function usePackPal() {
   const [caption, setCaption] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [lastHeard, setLastHeard] = useState('');
+  const [micError, setMicError] = useState('');
   const [genaiAvailable, setGenaiAvailable] = useState<boolean | null>(null);
 
   const persona = personas[personaId];
@@ -143,13 +144,25 @@ export function usePackPal() {
       return;
     }
     setStatus('listening');
-    const handle = listen(s.listenSeconds);
+    setLastHeard('');
+    const handle = listen(s.listenSeconds, (partial) => {
+      if (turn === turnRef.current) setLastHeard(partial);
+    });
     listenRef.current = handle;
-    void handle.result.then((text) => {
+    void handle.result.then(({ text, error }) => {
       if (turn !== turnRef.current || listenRef.current !== handle) return;
       listenRef.current = null;
-      if (text) void replyTextRef.current(text, 'speech');
-      else sendRef.current({ type: 'INTENT', intent: 'unknown' }, { inputType: 'timeout', reply: '' });
+      if (text) {
+        setMicError('');
+        void replyTextRef.current(text, 'speech');
+      } else if (error === 'no_speech') {
+        // Real silence: counts as no reply (repeat, then button prompt, then staff).
+        sendRef.current({ type: 'INTENT', intent: 'unknown' }, { inputType: 'timeout', reply: '', error });
+      } else if (error !== 'cancelled') {
+        // The microphone failed, not the person: don't count it against them.
+        setMicError(error ?? 'error');
+        setStatus('idle');
+      }
     });
   }, []);
 
@@ -157,6 +170,7 @@ export function usePackPal() {
     inputType: InputType;
     reply: string;
     interp?: Interpretation;
+    error?: string;
   }
 
   const send = useCallback(
@@ -191,7 +205,7 @@ export function usePackPal() {
           said: step.say ?? '',
           failed: event.type === 'INTENT' && (step.result === 'repeat' || step.result === 'button_prompt' || (step.result === 'alert' && intent === 'unknown')),
           latencyMs: meta.interp?.latencyMs ?? '',
-          error: meta.interp?.error ?? '',
+          error: meta.interp?.error ?? meta.error ?? '',
         };
         setLog((l) => [...l, entry]);
       }
@@ -320,6 +334,8 @@ export function usePackPal() {
     caption,
     status,
     lastHeard,
+    micError,
+    clearMicError: () => setMicError(''),
     genaiAvailable,
     allowed: allowedIntents(ctx),
     send,

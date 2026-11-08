@@ -4,12 +4,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Recognition = any;
 
-const RecognitionCtor: (new () => Recognition) | undefined =
+// Looked up at call time, so a test double can be swapped in.
+const getRecognition = (): (new () => Recognition) | undefined =>
   typeof window !== 'undefined' ? (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition : undefined;
 
 export const speechSupport = {
   tts: typeof window !== 'undefined' && 'speechSynthesis' in window,
-  stt: Boolean(RecognitionCtor),
+  get stt() {
+    return Boolean(getRecognition());
+  },
 };
 
 export function stopSpeaking() {
@@ -65,60 +68,107 @@ export async function chime(volume: number): Promise<void> {
   }
 }
 
+export interface ListenResult {
+  /** What was heard, or null when nothing was. */
+  text: string | null;
+  /** Why nothing was heard: no_speech, not-allowed, audio-capture, network ... */
+  error?: string;
+}
+
 export interface ListenHandle {
-  result: Promise<string | null>;
+  result: Promise<ListenResult>;
   cancel: () => void;
 }
 
+/** How long to wait after the person stops talking before using what was heard. */
+export const END_OF_SPEECH_MS = 1200;
+
 /**
  * Listen for one reply. The window stays open for `seconds` (long by design:
- * people may need time to start speaking). Resolves with the transcript, or
- * null when nothing was heard before the window closed.
+ * people may need time to start speaking). Once speech starts, the reply is
+ * taken as soon as the browser marks it final, or END_OF_SPEECH_MS after the
+ * last words heard. Interim words are kept, because browsers often never
+ * finalise a single short word such as "now".
  */
-export function listen(seconds: number): ListenHandle {
-  if (!RecognitionCtor) return { result: Promise.resolve(null), cancel: () => {} };
+export function listen(seconds: number, onHeard?: (partial: string) => void): ListenHandle {
+  const RecognitionCtor = getRecognition();
+  if (!RecognitionCtor) return { result: Promise.resolve({ text: null, error: 'unsupported' }), cancel: () => {} };
   const rec: Recognition = new RecognitionCtor();
   rec.lang = 'en-GB';
   rec.continuous = true;
-  rec.interimResults = false;
+  rec.interimResults = true;
   rec.maxAlternatives = 1;
+
   let settled = false;
-  let resolveFn: (v: string | null) => void = () => {};
-  const result = new Promise<string | null>((resolve) => (resolveFn = resolve));
-  const settle = (v: string | null) => {
+  let heard = '';
+  let resolveFn: (v: ListenResult) => void = () => {};
+  const result = new Promise<ListenResult>((resolve) => (resolveFn = resolve));
+  let windowTimer: ReturnType<typeof setTimeout> | undefined;
+  let silenceTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const settle = (v: ListenResult) => {
     if (settled) return;
     settled = true;
-    clearTimeout(timer);
+    clearTimeout(windowTimer);
+    clearTimeout(silenceTimer);
     try {
-      rec.stop();
+      rec.abort();
     } catch {
       /* already stopped */
     }
     resolveFn(v);
   };
-  const timer = setTimeout(() => settle(null), seconds * 1000);
+  const useHeard = (error?: string) => settle(heard ? { text: heard } : { text: null, error });
+
+  windowTimer = setTimeout(() => {
+    // Mid-sentence when the window closes: let them finish.
+    if (heard) return;
+    useHeard('no_speech');
+  }, seconds * 1000);
+
   rec.onresult = (e: any) => {
-    const last = e.results[e.results.length - 1];
-    if (last?.isFinal) settle(String(last[0]?.transcript ?? '').trim() || null);
+    let finalText = '';
+    let interim = '';
+    for (let i = e.resultIndex ?? 0; i < e.results.length; i++) {
+      const r = e.results[i];
+      const t = String(r[0]?.transcript ?? '');
+      if (r.isFinal) finalText += t;
+      else interim += t;
+    }
+    finalText = finalText.trim();
+    if (finalText) {
+      heard = finalText;
+      onHeard?.(heard);
+      settle({ text: heard });
+      return;
+    }
+    if (interim.trim()) {
+      heard = interim.trim();
+      onHeard?.(heard);
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => useHeard(), END_OF_SPEECH_MS);
+    }
   };
   rec.onerror = (e: any) => {
-    // "no-speech" just means silence so far; keep the window open by restarting.
-    if (e?.error === 'no-speech' && !settled) return;
-    settle(null);
+    const err = String(e?.error ?? 'error');
+    // Silence so far, or our own abort: keep going / ignore.
+    if (err === 'no-speech' || err === 'aborted') return;
+    useHeard(err);
   };
   rec.onend = () => {
-    if (!settled) {
-      try {
-        rec.start();
-      } catch {
-        settle(null);
-      }
+    if (settled) return;
+    // Session ended on its own. If words were heard, use them; otherwise keep the window open.
+    if (heard) return useHeard();
+    try {
+      rec.start();
+    } catch {
+      useHeard('restart_failed');
     }
   };
   try {
     rec.start();
   } catch {
-    settle(null);
+    useHeard('start_failed');
   }
-  return { result, cancel: () => settle(null) };
+  return { result, cancel: () => settle({ text: null, error: 'cancelled' }) };
 }

@@ -25,6 +25,15 @@ const STATE_LABEL: Record<string, string> = {
   ALERT: 'Staff called',
 };
 
+const MIC_ERRORS: Record<string, string> = {
+  'not-allowed': 'the browser blocked the microphone (allow it in the address bar, then reload)',
+  'service-not-allowed': 'speech recognition is turned off in this browser',
+  'audio-capture': 'no microphone was found',
+  network: 'the browser could not reach its speech service (check your connection)',
+  start_failed: 'listening could not start',
+  restart_failed: 'listening stopped unexpectedly',
+};
+
 export function UserScreen({ pp }: { pp: PackPal }) {
   const { ctx, allowed, settings, status, caption, persona } = pp;
   const [typed, setTyped] = useState('');
@@ -148,7 +157,21 @@ export function UserScreen({ pp }: { pp: PackPal }) {
               Say it
             </button>
           </div>
-          {pp.lastHeard && <p className="small muted">Last heard: “{pp.lastHeard}”</p>}
+          {pp.status === 'listening' ? (
+            <p className="small heard" aria-live="polite">
+              Hearing: {pp.lastHeard ? `“${pp.lastHeard}”` : <span className="muted">nothing yet, speak after PackPal finishes</span>}
+            </p>
+          ) : (
+            pp.lastHeard && <p className="small muted">Last heard: “{pp.lastHeard}”</p>
+          )}
+          {pp.micError && (
+            <p className="small warn" role="alert">
+              Microphone problem: {MIC_ERRORS[pp.micError] ?? pp.micError}. Buttons still work.{' '}
+              <button type="button" className="linklike" onClick={pp.clearMicError}>
+                Dismiss
+              </button>
+            </p>
+          )}
         </form>
 
         <label className="toggle">

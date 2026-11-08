@@ -99,8 +99,12 @@ src/screens/               UserScreen, StaffScreen, LogPanel
 src/log/                   event log, stats, CSV export
 server/intent.ts           POST /api/intent, calls Claude
 server/plugin.ts           mounts the route on the Vite dev/preview server
-docs/                      PRD link, test script
+docs/                      PRD link, test script, AI build transcript
 ```
+
+## How this was built
+
+The prototype was built with Claude Code. The full conversation, from the PRD to the published repo, is in [docs/ai-transcript.md](docs/ai-transcript.md).
 
 ## Known limits
 

@@ -4,10 +4,6 @@ A transcript of building the PackPal prototype with Claude Code (Claude Opus 5.5
 
 It shows every message and reply, with a one-line summary of each step Claude took (commands, file edits, browser checks). Raw tool output and internal reasoning are left out. Paths are shortened to the project folder.
 
-### Why this is a file and not a Claude Code link
-
-This conversation took place in a **local Claude Code session** in the Claude desktop app. Local sessions run on and are stored on my own computer, not on claude.ai, so there is no public link to them; a share link only exists for conversations that live on Claude's servers. To make the conversation viewable, I exported the session from the app and converted the export into this readable page.
-
 ---
 
 ## 1. User

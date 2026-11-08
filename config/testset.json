@@ -1,0 +1,606 @@
+{
+ "note": "Scripted replies per state, including off-script ones. 'expected' is what a careful human would read. Extend toward ~40 per state.",
+ "states": {
+  "START": {
+   "allowed": [
+    "got_it",
+    "later",
+    "no",
+    "help"
+   ],
+   "options": {}
+  },
+  "ITEM": {
+   "allowed": [
+    "got_it",
+    "no",
+    "help"
+   ],
+   "options": {}
+  },
+  "CHOICE": {
+   "allowed": [
+    "option_left",
+    "option_right",
+    "help"
+   ],
+   "options": {
+    "left": "raincoat",
+    "right": "hoodie"
+   }
+  },
+  "CONFIRM": {
+   "allowed": [
+    "got_it",
+    "no",
+    "help"
+   ],
+   "options": {}
+  },
+  "MORNING": {
+   "allowed": [
+    "got_it",
+    "help"
+   ],
+   "options": {}
+  },
+  "DOOR_EMPTY": {
+   "allowed": [
+    "got_it",
+    "no",
+    "help"
+   ],
+   "options": {}
+  },
+  "DOOR_KEYS": {
+   "allowed": [
+    "got_it",
+    "no",
+    "help"
+   ],
+   "options": {}
+  }
+ },
+ "cases": [
+  {
+   "state": "START",
+   "transcript": "now",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "okay let's go",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "yeah now",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "ready",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "uh huh",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "go on then",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "let's do it",
+   "expected": "got_it"
+  },
+  {
+   "state": "START",
+   "transcript": "later",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "not now",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "in a minute",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "after my tea",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "wait",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "not yet",
+   "expected": "later"
+  },
+  {
+   "state": "START",
+   "transcript": "no",
+   "expected": "no"
+  },
+  {
+   "state": "START",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "START",
+   "transcript": "I want Rina",
+   "expected": "help"
+  },
+  {
+   "state": "START",
+   "transcript": "where's Rina",
+   "expected": "help"
+  },
+  {
+   "state": "START",
+   "transcript": "banana",
+   "expected": "unknown"
+  },
+  {
+   "state": "START",
+   "transcript": "",
+   "expected": "unknown"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "got it",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "yep",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "uh huh",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "I've got it",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "it's here",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "done",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "in the bag",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "yeah got",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "mm hmm",
+   "expected": "got_it"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "no",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "can't find it",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "it's not here",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "I don't know where",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "gone",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "nope",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "not got it",
+   "expected": "no"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "help me",
+   "expected": "help"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "get Rina",
+   "expected": "help"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "I need Rina",
+   "expected": "help"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "the telly",
+   "expected": "unknown"
+  },
+  {
+   "state": "ITEM",
+   "transcript": "what",
+   "expected": "unknown"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "left",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "raincoat",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "the coat one",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "coat",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "rain coat",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "the first one",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "circle",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "that one the coat",
+   "expected": "option_left"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "right",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "hoodie",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "the hoodie please",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "hood",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "jumper with the hood",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "square",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "the second one",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "hoody",
+   "expected": "option_right"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "ask Rina",
+   "expected": "help"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "I don't know",
+   "expected": "unknown"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "yes",
+   "expected": "unknown"
+  },
+  {
+   "state": "CHOICE",
+   "transcript": "um",
+   "expected": "unknown"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "okay",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "yeah that one",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "uh huh",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "good",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "that's right",
+   "expected": "got_it"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "no",
+   "expected": "no"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "not that",
+   "expected": "no"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "no the other",
+   "expected": "no"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "wrong one",
+   "expected": "no"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "nah",
+   "expected": "no"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "Rina",
+   "expected": "help"
+  },
+  {
+   "state": "CONFIRM",
+   "transcript": "hmm",
+   "expected": "unknown"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "okay",
+   "expected": "got_it"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "got it",
+   "expected": "got_it"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "alright",
+   "expected": "got_it"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "uh huh",
+   "expected": "got_it"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "ask Rina",
+   "expected": "help"
+  },
+  {
+   "state": "MORNING",
+   "transcript": "what",
+   "expected": "unknown"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "it's empty",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "all gone",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "nothing there",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "yep empty",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "no",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "there's still stuff",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "not yet",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "the towel's still there",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "DOOR_EMPTY",
+   "transcript": "pardon",
+   "expected": "unknown"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "yes",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "got them",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "in my pocket",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "I've got my keys",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "yep keys",
+   "expected": "got_it"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "no",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "I can't find them",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "lost my keys",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "where are my keys",
+   "expected": "no"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "help",
+   "expected": "help"
+  },
+  {
+   "state": "DOOR_KEYS",
+   "transcript": "biscuit",
+   "expected": "unknown"
+  }
+ ]
+}

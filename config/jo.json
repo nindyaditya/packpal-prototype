@@ -1,0 +1,25 @@
+{
+  "id": "jo",
+  "userName": "Jo",
+  "staffName": "Marcus",
+  "activity": {
+    "name": "work at the cafe",
+    "day": "Monday",
+    "time": "09:00",
+    "pickupTime": "08:30",
+    "prepTime": "20:00"
+  },
+  "items": [
+    { "name": "apron", "alternatives": ["spare apron"] },
+    { "name": "lunch box", "alternatives": ["sandwich bag", "lunch money"] },
+    { "name": "bus pass", "alternatives": [] }
+  ],
+  "rainItem": { "name": "umbrella", "alternatives": ["raincoat", "rain hat"] },
+  "safetyCases": [
+    "Help button pressed",
+    "Keys lost at the door",
+    "No reply after the button prompt",
+    "Missing item with no staff-listed alternative",
+    "Plan or transport changed"
+  ]
+}

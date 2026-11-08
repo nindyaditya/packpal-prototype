@@ -1,0 +1,24 @@
+{
+  "id": "sam",
+  "userName": "Sam",
+  "staffName": "Rina",
+  "activity": {
+    "name": "swimming",
+    "day": "Wednesday",
+    "time": "10:00",
+    "pickupTime": "09:30",
+    "prepTime": "19:00"
+  },
+  "items": [
+    { "name": "bag", "alternatives": [] },
+    { "name": "towel", "alternatives": ["spare towel"] }
+  ],
+  "rainItem": { "name": "umbrella", "alternatives": ["raincoat", "hoodie"] },
+  "safetyCases": [
+    "Help button pressed",
+    "Keys lost at the door",
+    "No reply after the button prompt",
+    "Missing item with no staff-listed alternative",
+    "Plan or transport changed"
+  ]
+}

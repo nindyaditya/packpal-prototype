@@ -420,7 +420,7 @@ input:not([type]) {
   overflow: hidden;
   border-radius: 24px;
   padding: 18px 18px 22px;
-  min-height: 430px;
+  min-height: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -654,88 +654,6 @@ input:not([type]) {
   }
 }
 
-.track {
-  list-style: none;
-  margin: auto 0 0;
-  padding: 10px 12px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(6px);
-}
-.scene-morning .track {
-  background: rgba(255, 255, 255, 0.55);
-}
-.step {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  width: 74px;
-  text-align: center;
-}
-.step-icon {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  transition: transform 0.25s;
-}
-.scene-morning .step-icon {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(0, 0, 0, 0.08);
-}
-.step-todo .step-icon {
-  filter: grayscale(1);
-  opacity: 0.55;
-}
-.step-now .step-icon {
-  background: #fff;
-  border-color: var(--amber);
-  box-shadow: 0 0 0 4px rgba(255, 190, 26, 0.35);
-  animation: bob 1.4s ease-in-out infinite;
-}
-.step-done .step-icon {
-  background: #e8fff1;
-  border-color: #3ddc84;
-}
-.step-check {
-  position: absolute;
-  right: -6px;
-  bottom: -4px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--green);
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 0 0 2px #fff;
-}
-.step-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1.1;
-  overflow-wrap: anywhere;
-}
-.step-todo .step-label {
-  opacity: 0.7;
-}
-@keyframes bob {
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
 .confetti {
   position: absolute;
   inset: 0;
@@ -766,7 +684,6 @@ input:not([type]) {
   .rain,
   .confetti,
   .speaker-ring,
-  .step-now .step-icon,
   .bubble {
     animation: none !important;
   }

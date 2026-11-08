@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { speechSupport } from '../speech/speech';
 import type { Intent } from '../types';
 import type { PackPal } from '../usePackPal';
-import { itemIcon } from './icons';
 
 const MIC_ERRORS: Record<string, string> = {
   'not-allowed': 'the browser blocked the microphone (allow it in the address bar, then reload)',
@@ -27,8 +26,6 @@ const STATE_LABEL: Record<string, string> = {
   DONE: 'Off you go',
   ALERT: 'Staff called',
 };
-
-type StepStatus = 'done' | 'now' | 'todo';
 
 export function UserScreen({ pp }: { pp: PackPal }) {
   const { ctx, allowed, settings, status, caption, persona, mock } = pp;
@@ -76,23 +73,6 @@ export function UserScreen({ pp }: { pp: PackPal }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [pp]);
 
-  // Progress track: each item, then the two door checks in the morning.
-  const packing = ['ITEM', 'CHOICE', 'CONFIRM'].includes(ctx.state);
-  const steps: { key: string; icon: string; label: string; status: StepStatus }[] = ctx.items.map((it, i) => {
-    const label = i < ctx.index ? (ctx.packed[i] ?? it.name) : it.name;
-    return {
-      key: `item-${i}`,
-      icon: itemIcon(label),
-      label,
-      status: i < ctx.index ? 'done' : i === ctx.index && packing ? 'now' : 'todo',
-    };
-  });
-  if (morning) {
-    const doorDone = ['DOOR_KEYS', 'DONE'].includes(ctx.state) || (ctx.state === 'ALERT' && ctx.resumeState === 'DOOR_KEYS');
-    steps.push({ key: 'door', icon: '🎒', label: 'all in bag', status: doorDone ? 'done' : ctx.state === 'DOOR_EMPTY' ? 'now' : 'todo' });
-    steps.push({ key: 'keys', icon: '🔑', label: 'keys', status: ctx.state === 'DONE' ? 'done' : ctx.state === 'DOOR_KEYS' ? 'now' : 'todo' });
-  }
-
   const statusText =
     status === 'speaking' ? 'Speaking' : status === 'listening' ? `Listening · ${settings.listenSeconds}s` : status === 'thinking' ? 'Thinking' : STATE_LABEL[ctx.state];
 
@@ -129,22 +109,6 @@ export function UserScreen({ pp }: { pp: PackPal }) {
           <div className="speaker-grille" />
         </div>
 
-        {steps.length > 0 && (
-          <ol className="track" aria-label="Packing progress">
-            {steps.map((s) => (
-              <li key={s.key} className={`step step-${s.status}`}>
-                <span className="step-icon" aria-hidden="true">
-                  {s.icon}
-                  {s.status === 'done' && <span className="step-check">✓</span>}
-                </span>
-                <span className="step-label">
-                  {s.label}
-                  <span className="sr-only"> ({s.status === 'done' ? 'done' : s.status === 'now' ? 'now' : 'to do'})</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        )}
         {ctx.state === 'DONE' && <div className="confetti" aria-hidden="true" />}
       </div>
 

@@ -499,22 +499,22 @@
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "it's empty",
+   "transcript": "it's all in",
    "expected": "got_it"
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "all gone",
+   "transcript": "all packed",
    "expected": "got_it"
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "nothing there",
+   "transcript": "everything's in",
    "expected": "got_it"
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "yep empty",
+   "transcript": "yep all in",
    "expected": "got_it"
   },
   {
@@ -524,7 +524,7 @@
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "there's still stuff",
+   "transcript": "not everything",
    "expected": "no"
   },
   {
@@ -534,7 +534,7 @@
   },
   {
    "state": "DOOR_EMPTY",
-   "transcript": "the towel's still there",
+   "transcript": "my towel's not in",
    "expected": "no"
   },
   {

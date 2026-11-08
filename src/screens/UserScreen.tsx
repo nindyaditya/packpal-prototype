@@ -2,28 +2,7 @@ import { useEffect, useState } from 'react';
 import { speechSupport } from '../speech/speech';
 import type { Intent } from '../types';
 import type { PackPal } from '../usePackPal';
-
-interface ButtonDef {
-  intent: Intent;
-  label: string;
-  className: string;
-  keys: string;
-}
-
-const STATE_LABEL: Record<string, string> = {
-  IDLE: 'Waiting',
-  START: 'Getting ready',
-  ITEM: 'Packing',
-  CHOICE: 'Choosing',
-  CONFIRM: 'Checking choice',
-  RECAP: 'All packed',
-  NIGHT_DONE: 'Packed for tomorrow',
-  MORNING: 'Morning',
-  DOOR_EMPTY: 'Door check',
-  DOOR_KEYS: 'Door check',
-  DONE: 'Off you go',
-  ALERT: 'Staff called',
-};
+import { itemIcon } from './icons';
 
 const MIC_ERRORS: Record<string, string> = {
   'not-allowed': 'the browser blocked the microphone (allow it in the address bar, then reload)',
@@ -34,16 +13,45 @@ const MIC_ERRORS: Record<string, string> = {
   restart_failed: 'listening stopped unexpectedly',
 };
 
+const STATE_LABEL: Record<string, string> = {
+  IDLE: 'Waiting',
+  START: 'Getting ready',
+  ITEM: 'Packing',
+  CHOICE: 'Choosing',
+  CONFIRM: 'Checking choice',
+  RECAP: 'All packed',
+  NIGHT_DONE: 'Packed for tomorrow',
+  MORNING: 'Morning news',
+  DOOR_EMPTY: 'Door check',
+  DOOR_KEYS: 'Door check',
+  DONE: 'Off you go',
+  ALERT: 'Staff called',
+};
+
+type StepStatus = 'done' | 'now' | 'todo';
+
 export function UserScreen({ pp }: { pp: PackPal }) {
-  const { ctx, allowed, settings, status, caption, persona } = pp;
+  const { ctx, allowed, settings, status, caption, persona, mock } = pp;
   const [typed, setTyped] = useState('');
   const choiceActive = ctx.state === 'CHOICE';
+  const canReply = allowed.length > 0;
+  // A button works only when the current state accepts it; help always does.
+  const enabled = (i: Intent) => canReply && allowed.includes(i);
 
-  const buttons: ButtonDef[] = [
-    { intent: 'got_it', label: 'Got it', className: 'btn-got', keys: 'G or 1' },
-    { intent: 'no', label: 'No', className: 'btn-no', keys: 'N or 2' },
-    { intent: 'help', label: 'Help', className: 'btn-help', keys: 'H or 3' },
-  ];
+  const morning = ctx.phase === 'morning' || ['MORNING', 'DOOR_EMPTY', 'DOOR_KEYS', 'DONE'].includes(ctx.state);
+  const raining = morning && mock.rain;
+  const ring =
+    ctx.state === 'ALERT'
+      ? 'alert'
+      : status === 'speaking'
+        ? 'speaking'
+        : status === 'listening'
+          ? 'listening'
+          : status === 'thinking'
+            ? 'thinking'
+            : ctx.state === 'DONE'
+              ? 'done'
+              : 'idle';
 
   // F13: keyboard shortcuts for all five buttons (and switch access).
   useEffect(() => {
@@ -66,75 +74,107 @@ export function UserScreen({ pp }: { pp: PackPal }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [pp, choiceActive]);
+  }, [pp]);
 
-  const canReply = allowed.length > 0;
-  // A button works only when the current state accepts it; help always does.
-  const enabled = (i: Intent) => canReply && allowed.includes(i);
+  // Progress track: each item, then the two door checks in the morning.
+  const packing = ['ITEM', 'CHOICE', 'CONFIRM'].includes(ctx.state);
+  const steps: { key: string; icon: string; label: string; status: StepStatus }[] = ctx.items.map((it, i) => {
+    const label = i < ctx.index ? (ctx.packed[i] ?? it.name) : it.name;
+    return {
+      key: `item-${i}`,
+      icon: itemIcon(label),
+      label,
+      status: i < ctx.index ? 'done' : i === ctx.index && packing ? 'now' : 'todo',
+    };
+  });
+  if (morning) {
+    const doorDone = ['DOOR_KEYS', 'DONE'].includes(ctx.state) || (ctx.state === 'ALERT' && ctx.resumeState === 'DOOR_KEYS');
+    steps.push({ key: 'door', icon: '🎒', label: 'all in bag', status: doorDone ? 'done' : ctx.state === 'DOOR_EMPTY' ? 'now' : 'todo' });
+    steps.push({ key: 'keys', icon: '🔑', label: 'keys', status: ctx.state === 'DONE' ? 'done' : ctx.state === 'DOOR_KEYS' ? 'now' : 'todo' });
+  }
+
+  const statusText =
+    status === 'speaking' ? 'Speaking' : status === 'listening' ? `Listening · ${settings.listenSeconds}s` : status === 'thinking' ? 'Thinking' : STATE_LABEL[ctx.state];
 
   return (
     <section className="panel user-panel" aria-labelledby="user-title">
       <header className="panel-head">
         <div>
-          <h2 id="user-title">Ready spot</h2>
-          <p className="muted">What {persona.userName} sees and hears by the door</p>
+          <h2 id="user-title">{persona.userName}'s PackPal</h2>
+          <p className="muted small">By the front door · what {persona.userName} hears and presses</p>
         </div>
-        <span className={`status status-${status}`} aria-live="polite">
-          {status === 'speaking' ? 'Speaking' : status === 'listening' ? `Listening (${settings.listenSeconds}s)` : status === 'thinking' ? 'Thinking' : STATE_LABEL[ctx.state]}
-        </span>
       </header>
 
-      <div className={`device ${ctx.state === 'ALERT' ? 'device-alert' : ''}`}>
-        <div className="speaker" aria-hidden="true">
-          <span className={`pulse ${status === 'speaking' ? 'on' : ''} ${status === 'listening' ? 'listen' : ''}`} />
-        </div>
-        <div className="caption" aria-live="assertive" role="status">
-          {settings.captions ? caption || <span className="muted">PackPal is quiet.</span> : <span className="muted">Captions off (audio-only test)</span>}
+      <div className={`scene ${morning ? 'scene-morning' : 'scene-evening'} ${raining ? 'scene-rainy' : ''} ${ctx.state === 'ALERT' ? 'scene-alert' : ''}`}>
+        {raining && <div className="rain" aria-hidden="true" />}
+        {!morning && <div className="stars" aria-hidden="true" />}
+        <div className={`sky-body ${morning ? 'sun' : 'moon'}`} aria-hidden="true" />
+
+        <div className="scene-top">
+          <span className="scene-time">{morning ? `${persona.activity.day} morning` : `Evening before ${persona.activity.day}`}</span>
+          {!morning && mock.rain && <span className="scene-chip">🌧️ Rain tomorrow</span>}
+          {raining && <span className="scene-chip">🌧️ Raining</span>}
+          <span className={`scene-status ring-${ring}`} aria-live="polite">
+            <span className="dot" aria-hidden="true" />
+            {statusText}
+          </span>
         </div>
 
-        <div className="tray" aria-label="Packed on the ready spot">
-          {ctx.packed.length === 0 ? (
-            <span className="muted small">Nothing on the ready spot yet</span>
-          ) : (
-            ctx.packed.map((p, i) => (
-              <span className="chip" key={`${p}-${i}`}>
-                {p}
-              </span>
-            ))
-          )}
+        <div key={caption} className={`bubble ${caption && settings.captions ? '' : 'bubble-quiet'}`} aria-live="assertive" role="status">
+          {settings.captions ? caption || 'PackPal is quiet.' : '🔈 Captions off (audio-only test)'}
         </div>
 
-        <div className="buttons">
-          <div className="buttons-main">
-            {buttons.map((b) => (
-              <button key={b.intent} className={`big-btn ${b.className}`} disabled={!enabled(b.intent)} onClick={() => pp.press(b.intent)} aria-keyshortcuts={b.keys}>
-                <span className="big-label">{b.label}</span>
-                <span className="key-hint">{b.keys}</span>
-              </button>
+        <div className={`speaker ring-${ring}`} aria-hidden="true">
+          <div className="speaker-ring" />
+          <div className="speaker-grille" />
+        </div>
+
+        {steps.length > 0 && (
+          <ol className="track" aria-label="Packing progress">
+            {steps.map((s) => (
+              <li key={s.key} className={`step step-${s.status}`}>
+                <span className="step-icon" aria-hidden="true">
+                  {s.icon}
+                  {s.status === 'done' && <span className="step-check">✓</span>}
+                </span>
+                <span className="step-label">
+                  {s.label}
+                  <span className="sr-only"> ({s.status === 'done' ? 'done' : s.status === 'now' ? 'now' : 'to do'})</span>
+                </span>
+              </li>
             ))}
-          </div>
-          <div className="buttons-choice">
-            <button
-              className={`big-btn btn-left ${choiceActive && enabled('option_left') ? 'lit' : ''}`}
-              disabled={!enabled('option_left')}
-              onClick={() => pp.press('option_left')}
-              aria-label="Left circle"
-            >
-              <span className="shape circle" aria-hidden="true" />
-              <span className="big-label">Left</span>
-              <span className="key-hint">← or 4</span>
-            </button>
-            <button
-              className={`big-btn btn-right ${choiceActive && enabled('option_right') ? 'lit' : ''}`}
-              disabled={!enabled('option_right')}
-              onClick={() => pp.press('option_right')}
-              aria-label="Right square"
-            >
-              <span className="shape square" aria-hidden="true" />
-              <span className="big-label">Right</span>
-              <span className="key-hint">→ or 5</span>
-            </button>
-          </div>
+          </ol>
+        )}
+        {ctx.state === 'DONE' && <div className="confetti" aria-hidden="true" />}
+      </div>
+
+      <div className="console" aria-label="PackPal buttons">
+        <div className="console-row three">
+          <PhysButton intent="got_it" label="Got it" keys="G · 1" cls="pb-got" enabled={enabled('got_it')} onPress={pp.press} />
+          <PhysButton intent="no" label="No" keys="N · 2" cls="pb-no" enabled={enabled('no')} onPress={pp.press} />
+          <PhysButton intent="help" label="Help" keys="H · 3" cls="pb-help" enabled={enabled('help')} onPress={pp.press} />
+        </div>
+        <div className="console-row two">
+          <PhysButton
+            intent="option_left"
+            label="Left"
+            keys="← · 4"
+            cls={`pb-side ${choiceActive && enabled('option_left') ? 'lit' : ''}`}
+            enabled={enabled('option_left')}
+            onPress={pp.press}
+            shape="circle"
+            aria="Left circle"
+          />
+          <PhysButton
+            intent="option_right"
+            label="Right"
+            keys="→ · 5"
+            cls={`pb-side ${choiceActive && enabled('option_right') ? 'lit' : ''}`}
+            enabled={enabled('option_right')}
+            onPress={pp.press}
+            shape="square"
+            aria="Right square"
+          />
         </div>
       </div>
 
@@ -159,7 +199,7 @@ export function UserScreen({ pp }: { pp: PackPal }) {
           </div>
           {pp.status === 'listening' ? (
             <p className="small heard" aria-live="polite">
-              Hearing: {pp.lastHeard ? `“${pp.lastHeard}”` : <span className="muted">nothing yet, speak after PackPal finishes</span>}
+              🎙️ Hearing: {pp.lastHeard ? `“${pp.lastHeard}”` : <span className="muted">nothing yet, speak after PackPal finishes</span>}
             </p>
           ) : (
             pp.lastHeard && <p className="small muted">Last heard: “{pp.lastHeard}”</p>
@@ -175,12 +215,7 @@ export function UserScreen({ pp }: { pp: PackPal }) {
         </form>
 
         <label className="toggle">
-          <input
-            type="checkbox"
-            checked={settings.autoListen}
-            disabled={!speechSupport.stt}
-            onChange={(e) => pp.setSettings({ ...settings, autoListen: e.target.checked })}
-          />
+          <input type="checkbox" checked={settings.autoListen} disabled={!speechSupport.stt} onChange={(e) => pp.setSettings({ ...settings, autoListen: e.target.checked })} />
           <span>
             Listen with the microphone after each prompt
             {!speechSupport.stt && <span className="muted"> (not supported in this browser, use Chrome or Edge)</span>}
@@ -196,5 +231,35 @@ export function UserScreen({ pp }: { pp: PackPal }) {
         </label>
       </div>
     </section>
+  );
+}
+
+function PhysButton({
+  intent,
+  label,
+  keys,
+  cls,
+  enabled,
+  onPress,
+  shape,
+  aria,
+}: {
+  intent: Intent;
+  label: string;
+  keys: string;
+  cls: string;
+  enabled: boolean;
+  onPress: (i: Intent, inputType?: 'button') => void;
+  shape?: 'circle' | 'square';
+  aria?: string;
+}) {
+  return (
+    <button className={`pb ${cls}`} disabled={!enabled} onClick={() => onPress(intent)} aria-label={aria} aria-keyshortcuts={keys.replace(/ · /g, ' ')}>
+      {shape && <span className={`pb-shape ${shape}`} aria-hidden="true" />}
+      <span className="pb-label">{label}</span>
+      <span className="pb-keys" aria-hidden="true">
+        {keys}
+      </span>
+    </button>
   );
 }

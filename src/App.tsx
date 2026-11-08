@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DemoBar } from './screens/DemoBar';
 import { StaffScreen } from './screens/StaffScreen';
 import { UserScreen } from './screens/UserScreen';
 import { speechSupport } from './speech/speech';
@@ -20,7 +21,13 @@ export function App() {
       <header className="topbar">
         <div className="brand">
           <span className="logo" aria-hidden="true">
-            ◐
+            <svg viewBox="0 0 40 40" width="40" height="40">
+              <rect x="4" y="10" width="32" height="26" rx="9" fill="currentColor" />
+              <path d="M14 10V8a6 6 0 0 1 12 0v2" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+              <circle cx="15" cy="23" r="2.6" fill="#fff" />
+              <circle cx="25" cy="23" r="2.6" fill="#fff" />
+              <path d="M15 29q5 4 10 0" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
           </span>
           <div>
             <h1>PackPal</h1>
@@ -65,6 +72,8 @@ export function App() {
         </p>
       )}
       {!speechSupport.tts && <p className="banner">This browser has no speech output. Captions still show every line.</p>}
+
+      <DemoBar pp={pp} />
 
       <main className={`layout layout-${view}`}>
         {view !== 'staff' && <UserScreen pp={pp} />}

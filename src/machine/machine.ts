@@ -10,7 +10,7 @@ export interface Ctx {
   /** The items for this run, in fixed order (rain item added by rule). */
   items: Item[];
   index: number;
-  /** What actually went on the ready spot (alternatives substituted). */
+  /** What was actually packed (alternatives substituted). */
   packed: string[];
   /** Alternatives used, for the staff summary. */
   substitutions: { item: string; used: string }[];

@@ -24,7 +24,7 @@ export function StaffScreen({ pp }: { pp: PackPal }) {
       <div className="tabs" role="tablist">
         {(
           [
-            ['run', 'Run & alerts'],
+            ['run', 'Alerts & summaries'],
             ['setup', 'Setup'],
             ['log', 'Log & evaluation'],
           ] as [Tab, string][]
@@ -43,47 +43,11 @@ export function StaffScreen({ pp }: { pp: PackPal }) {
 }
 
 function RunTab({ pp }: { pp: PackPal }) {
-  const { mock, setMock, ctx, persona } = pp;
+  const { persona } = pp;
   const open = pp.alerts.filter((a) => !a.resolved);
-  const canChime = ['IDLE', 'NIGHT_DONE', 'DONE'].includes(ctx.state);
 
   return (
     <div className="stack">
-      <div className="card">
-        <h3>Mock controls</h3>
-        <div className="row wrap">
-          <label className="toggle">
-            <input type="checkbox" checked={mock.rain} onChange={(e) => setMock({ ...mock, rain: e.target.checked })} />
-            <span>Rain forecast</span>
-          </label>
-          <label className="toggle">
-            <input type="checkbox" checked={mock.planChange} onChange={(e) => setMock({ ...mock, planChange: e.target.checked })} />
-            <span>Plan change</span>
-          </label>
-        </div>
-        <div className="row wrap">
-          <button className="btn primary" onClick={() => pp.send({ type: 'CHIME' })} disabled={!canChime}>
-            Chime now (prep time {persona.activity.prepTime})
-          </button>
-          <button className="btn" onClick={() => pp.send({ type: 'SIMULATE_MORNING' })} disabled={ctx.state === 'ALERT'}>
-            Simulate tomorrow morning
-          </button>
-          <button className="btn ghost" onClick={pp.reset}>
-            Reset routine
-          </button>
-        </div>
-        <p className="small muted">
-          State <code>{ctx.state}</code>
-          {ctx.night && (
-            <>
-              {' '}
-              · last night: rain {ctx.night.rain ? 'on' : 'off'}, plan change {ctx.night.planChange ? 'on' : 'off'}
-            </>
-          )}
-          {ctx.reminderAt && ctx.state === 'IDLE' && <> · reminder at {new Date(ctx.reminderAt).toTimeString().slice(0, 5)} (use Chime now to skip ahead)</>}
-        </p>
-      </div>
-
       <div className={`card ${open.length ? 'card-alert' : ''}`} aria-live="polite">
         <h3>Alerts</h3>
         {pp.alerts.length === 0 && <p className="muted small">No alerts.</p>}
@@ -155,7 +119,7 @@ function SettingsCard({ pp }: { pp: PackPal }) {
       </div>
       <label className="toggle">
         <input type="checkbox" checked={settings.captions} onChange={(e) => setSettings({ ...settings, captions: e.target.checked })} />
-        <span>Show captions on the ready spot (turn off for an audio-only test)</span>
+        <span>Show captions on {pp.persona.userName}'s screen (turn off for an audio-only test)</span>
       </label>
     </div>
   );

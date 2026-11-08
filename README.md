@@ -1,6 +1,6 @@
 # PackPal prototype
 
-**PackPal is an audio-first helper at a ready spot by the door that guides an adult with IDD through packing the night before, one item at a time, adapts to rain and plan changes with staff-approved alternatives, and ends with a short door check.**
+**PackPal is an audio-first helper by the front door that guides an adult with IDD through packing the night before, one item at a time, adapts to rain and plan changes with staff-approved alternatives, and ends with a short door check.**
 
 This is a browser demo that runs the whole leaving routine end to end, so the dialogue can be tested and a **rules-only** interpreter can be compared with a **GenAI** interpreter. It uses fake persona data only (Sam and Rina; Jo and Marcus as a second persona).
 
@@ -42,12 +42,12 @@ Use the **Rules-only / GenAI interpreter** toggle in the top bar. The mode only 
 
 ## Running the demo (Sam's swimming day)
 
-1. **Staff → Run & alerts**: leave **Rain forecast** on, then press **Chime now**.
+1. In the **Demo controls** bar (it simulates the world, so it sits outside both screens), leave **Rain forecast** on, then press **Evening chime**.
 2. PackPal: “Tomorrow is swimming. Let's get ready. Now or later?” Press **Got it**.
 3. Bag → Got it. Towel → Got it. “Rain tomorrow. Find your umbrella. Got it?” → **No**.
 4. “Left for raincoat. Right for hoodie. Or ask Rina.” The circle and square light up (their labels never change, like physical buttons). Press the **left circle** for raincoat.
 5. “Raincoat. Okay?” → Got it. “Bag, towel, raincoat. All ready.” → Got it.
-6. **Simulate tomorrow morning**. With nothing changed it goes straight to the door check: ready spot empty → keys → “Have fun at swimming.”
+6. Press **Next morning** in the demo controls. With nothing changed it goes straight to the door check: everything in your bag? → keys → “Have fun at swimming.”
 
 Try also: turn on **Plan change** before simulating the morning; press **Help** at any step; answer **No** to the keys question; type replies such as “the coat one”, “not now” or “uh huh” in each mode.
 
@@ -71,6 +71,8 @@ Try also: turn on **Plan change** before simulating the morning; press **Help** 
   - GenAI: `POST /api/intent` → `server/intent.ts` → Claude (`claude-haiku-5-5`, structured JSON output, 3 s timeout, no retries). The model only returns `{ intent, confidence }`. It never speaks, picks items or suggests alternatives.
   - A disallowed intent, confidence below the threshold (0.7 by default, adjustable), invalid JSON, a timeout or a network error all count as unknown.
 - **Speech** (`src/speech/speech.ts`): Web Speech API. The listening window is 8 s by default (5 to 15 s on the Staff screen) and restarts after silence instead of closing early. No audio is stored.
+- **User screen**: a scene that turns from evening to morning (with rain when it is forecast), a speaker whose light ring shows speaking, listening, alert or done, a caption bubble, a packing progress track, and five physical-style buttons.
+- **Demo controls**: rain forecast, plan change, evening chime, next morning and reset. They simulate the world, so they sit outside the User and Staff screens.
 - **Staff screen**: setup (activity, times, ordered items and alternatives, rain item, safety cases), voice and listening settings, alerts with “Handled, resume”, and summaries. Summaries appear only when the user turns on **Send my summary to Rina** on the User screen. It is off by default.
 - **Event log** (Staff → Log & evaluation): every turn records prompt, reply, input type, intent, confidence, path, result and time. Export it as CSV. The log is stored only in this browser's localStorage.
 

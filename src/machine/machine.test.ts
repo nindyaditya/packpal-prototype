@@ -138,7 +138,7 @@ describe('morning and door check', () => {
 
   it('no change since the night: straight to the door check', () => {
     const { said, ctx } = run([MORNING], env(), night({}));
-    expect(said[0]).toBe('Is the ready spot empty?');
+    expect(said[0]).toBe('Is everything in your bag?');
     expect(ctx.state).toBe('DOOR_EMPTY');
   });
 
@@ -146,7 +146,7 @@ describe('morning and door check', () => {
     const { said, steps } = run([MORNING, 'got_it'], env({ planChange: true }), night({}));
     expect(said[0]).toBe('Plan changed today. Rina will tell you more.');
     expect(steps[0].effects[0].kind).toBe('alert');
-    expect(said[1]).toBe('Is the ready spot empty?');
+    expect(said[1]).toBe('Is everything in your bag?');
   });
 
   it('rain added overnight: adds the rain item, then the door', () => {
@@ -154,7 +154,7 @@ describe('morning and door check', () => {
     expect(said[0]).toBe("Rain today. Let's add one thing.");
     expect(said[1]).toBe('Find your umbrella. Got it?');
     expect(said[3]).toBe('Raincoat. Okay?');
-    expect(said[4]).toBe('Is the ready spot empty?');
+    expect(said[4]).toBe('Is everything in your bag?');
   });
 
   it('door check: empty, keys, then have fun, with a summary effect', () => {
@@ -165,7 +165,7 @@ describe('morning and door check', () => {
     expect(steps[2].effects).toContainEqual({ kind: 'summary' });
   });
 
-  it('ready spot not empty: tells the user and waits', () => {
+  it('things left out of the bag: tells the user and waits', () => {
     const { said, ctx } = run([MORNING, 'no'], env(), night({}));
     expect(said[1]).toBe('Put everything in your bag. Then press got it.');
     expect(ctx.state).toBe('DOOR_EMPTY');

@@ -45,7 +45,7 @@ Use the **Rules-only / GenAI interpreter** toggle in the top bar. The mode only 
 1. **Staff → Run & alerts**: leave **Rain forecast** on, then press **Chime now**.
 2. PackPal: “Tomorrow is swimming. Let's get ready. Now or later?” Press **Got it**.
 3. Bag → Got it. Towel → Got it. “Rain tomorrow. Find your umbrella. Got it?” → **No**.
-4. “No umbrella? Raincoat or hoodie? Or ask Rina.” The circle and square light up. Press the **left circle** (raincoat).
+4. “Left for raincoat. Right for hoodie. Or ask Rina.” The circle and square light up (their labels never change, like physical buttons). Press the **left circle** for raincoat.
 5. “Raincoat. Okay?” → Got it. “Bag, towel, raincoat. All ready.” → Got it.
 6. **Simulate tomorrow morning**. With nothing changed it goes straight to the door check: ready spot empty → keys → “Have fun at swimming.”
 

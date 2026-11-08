@@ -118,20 +118,20 @@ export function UserScreen({ pp }: { pp: PackPal }) {
               className={`big-btn btn-left ${choiceActive && enabled('option_left') ? 'lit' : ''}`}
               disabled={!enabled('option_left')}
               onClick={() => pp.press('option_left')}
-              aria-label={`Left circle${choiceActive && ctx.options.left ? `: ${ctx.options.left}` : ''}`}
+              aria-label="Left circle"
             >
               <span className="shape circle" aria-hidden="true" />
-              <span className="big-label">{choiceActive && ctx.options.left ? ctx.options.left : 'Left'}</span>
+              <span className="big-label">Left</span>
               <span className="key-hint">← or 4</span>
             </button>
             <button
               className={`big-btn btn-right ${choiceActive && enabled('option_right') ? 'lit' : ''}`}
               disabled={!enabled('option_right')}
               onClick={() => pp.press('option_right')}
-              aria-label={`Right square${choiceActive && ctx.options.right ? `: ${ctx.options.right}` : ''}`}
+              aria-label="Right square"
             >
               <span className="shape square" aria-hidden="true" />
-              <span className="big-label">{choiceActive && ctx.options.right ? ctx.options.right : 'Right'}</span>
+              <span className="big-label">Right</span>
               <span className="key-hint">→ or 5</span>
             </button>
           </div>

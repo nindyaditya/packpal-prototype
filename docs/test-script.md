@@ -21,7 +21,7 @@ Reset the routine, set **Rain forecast** on and **Plan change** off. The facilit
 
 1. Chime. Sam: “not now”. Expect: “Okay. I'll ask again in 30 minutes.” Press Chime now again.
 2. Sam: “yeah”. Bag. Sam: “uh huh”. Towel. Sam: “got it”.
-3. Umbrella. Sam: “it's not here”. Expect the choice of raincoat or hoodie.
+3. Umbrella. Sam: “it's not here”. Expect “Left for raincoat. Right for hoodie. Or ask Rina.”
 4. Sam: “the coat one”. Expect “Raincoat. Okay?” (GenAI) or a repeat (rules-only).
 5. Sam: “no the other”. Expect the same choice again. Sam presses the right square. “Hoodie. Okay?” → “yes”.
 6. Recap → Got it. Turn **Plan change** on. Simulate tomorrow morning.

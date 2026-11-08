@@ -54,7 +54,7 @@ describe('night before', () => {
 
   it("Sam's demo: missing umbrella, raincoat chosen and repeated back", () => {
     const { ctx, said } = run([CHIME, 'got_it', 'got_it', 'got_it', 'no', 'option_left', 'got_it', 'got_it'], env({ rain: true }));
-    expect(said[4]).toBe('No umbrella? Raincoat or hoodie? Or ask Rina.');
+    expect(said[4]).toBe('Left for raincoat. Right for hoodie. Or ask Rina.');
     expect(said[5]).toBe('Raincoat. Okay?');
     expect(said[6]).toBe('Bag, towel, raincoat. All ready.');
     expect(said[7]).toBe(prompts.goodnight());
@@ -71,7 +71,7 @@ describe('night before', () => {
 
   it('offers only one option when staff listed one alternative', () => {
     const { ctx, said } = run([CHIME, 'got_it', 'got_it', 'no']);
-    expect(said[3]).toBe('No towel? Take spare towel? Or ask Rina.');
+    expect(said[3]).toBe('Left for spare towel. Or ask Rina.');
     expect(ctx.options).toEqual({ left: 'spare towel', right: undefined });
     // Right button is not allowed when there is no right option.
     expect(run(['option_right'], env(), ctx).steps[0].result).toBe('repeat');
@@ -200,6 +200,6 @@ describe('wording rules', () => {
     const e: Env = { persona: jo as Persona, mock: { rain: false, planChange: false } };
     const { said } = run([CHIME, 'got_it', 'got_it', 'no'], e);
     expect(said[0]).toBe("Tomorrow is work at the cafe. Let's get ready. Now or later?");
-    expect(said[3]).toBe('No lunch box? Sandwich bag or lunch money? Or ask Marcus.');
+    expect(said[3]).toBe('Left for sandwich bag. Right for lunch money. Or ask Marcus.');
   });
 });

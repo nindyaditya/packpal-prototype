@@ -17,7 +17,7 @@ For the submission, export it (PDF or Markdown) and save it in this folder next 
 | F6 | Rain, plan change, simulate tomorrow morning | Staff → Run & alerts → Mock controls |
 | F7 | Chime and opening prompt at preparation time | Real-clock check every 15 s, or **Chime now** |
 | F8 | One item per turn; rain item added by rule | `nightItems()` in `src/machine/machine.ts` |
-| F9 | First two alternatives on left and right, plus “or ask …” | `CHOICE` state |
+| F9 | First two alternatives on left and right, plus “or ask …” (prompt says which button is which; button labels never change) | `CHOICE` state |
 | F10 | Repeat choice back; “no” re-offers | `CONFIRM` state |
 | F11 | Recap of packed items | `RECAP` state |
 | F12 | Five buttons; left and right lit only during a choice | `src/screens/UserScreen.tsx` |

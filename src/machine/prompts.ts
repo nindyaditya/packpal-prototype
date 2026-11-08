@@ -8,9 +8,12 @@ export const prompts = {
   later: () => `Okay. I'll ask again in 30 minutes.`,
   item: (item: string) => `Find your ${item}. Got it?`,
   rainItem: (item: string) => `Rain tomorrow. Find your ${item}. Got it?`,
-  choiceTwo: (item: string, left: string, right: string, staff: string) =>
-    `No ${item}? ${cap(left)} or ${right}? Or ask ${staff}.`,
-  choiceOne: (item: string, left: string, staff: string) => `No ${item}? Take ${left}? Or ask ${staff}.`,
+  // The buttons are physical and never change, so the prompt says which button
+  // means which option. The missing item was named in the line before, so it
+  // is not repeated here (keeps the line within 10 words).
+  choiceTwo: (_item: string, left: string, right: string, staff: string) =>
+    `Left for ${left}. Right for ${right}. Or ask ${staff}.`,
+  choiceOne: (_item: string, left: string, staff: string) => `Left for ${left}. Or ask ${staff}.`,
   confirm: (choice: string) => `${cap(choice)}. Okay?`,
   recap: (items: string[]) => `${cap(items.join(', '))}. All ready.`,
   goodnight: () => `Good night. See you in the morning.`,

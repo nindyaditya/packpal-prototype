@@ -219,45 +219,62 @@ input:not([type]) {
   text-transform: uppercase;
   color: var(--accent);
 }
+.demobar-section {
+  display: grid;
+  gap: 4px;
+}
+.demobar-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 .demobar-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 12px;
   align-items: center;
+}
+.demobar-divider {
+  align-self: stretch;
+  width: 1px;
+  background: color-mix(in srgb, var(--accent) 30%, var(--line));
 }
 .demobar-state {
   margin-left: auto;
 }
-.switch,
-.demo-btn {
+
+/* Settings: plain switches, no button chrome. */
+.switch {
   font: inherit;
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.92rem;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--panel);
+  padding: 4px 2px;
+  border: 0;
+  background: none;
   color: var(--ink);
   cursor: pointer;
   white-space: nowrap;
 }
 .switch-track {
-  width: 34px;
-  height: 20px;
+  width: 40px;
+  height: 24px;
   border-radius: 999px;
-  background: var(--line);
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
   position: relative;
   transition: background 0.2s;
+  flex: none;
 }
 .switch-thumb {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -267,29 +284,100 @@ input:not([type]) {
   background: var(--accent);
 }
 .switch.on .switch-thumb {
-  transform: translateX(14px);
+  transform: translateX(16px);
 }
-.demo-btn.evening {
-  background: #2b2d5c;
-  border-color: #2b2d5c;
+.switch-state {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 2.2em;
+}
+.switch.on .switch-state {
+  color: var(--accent);
+}
+
+/* Actions: big, solid, raised call-to-action buttons. */
+.cta {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 12px;
+  min-height: 54px;
+  border-radius: 14px;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  box-shadow:
+    0 4px 0 var(--cta-edge),
+    0 8px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.06s, box-shadow 0.06s, filter 0.15s;
+}
+.cta:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.cta:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 var(--cta-edge),
+    0 3px 6px rgba(0, 0, 0, 0.18);
+}
+.cta:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.3);
+  opacity: 0.5;
+  box-shadow: none;
+}
+.cta-evening {
+  --cta-edge: #141634;
+  background: linear-gradient(180deg, #3b3f8a, #262a63);
   color: #fff;
 }
-.demo-btn.morning {
-  background: #ffcf6b;
-  border-color: #f2b84b;
-  color: #4a3200;
+.cta-morning {
+  --cta-edge: #c98a12;
+  background: linear-gradient(180deg, #ffd978, #ffbf3c);
+  color: #3d2800;
 }
-.demo-btn.ghost {
-  background: transparent;
+.cta-icon {
+  font-size: 1.4rem;
 }
-.demo-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.cta-text {
+  display: grid;
 }
-.demo-sub {
+.cta-sub {
+  font-size: 0.74rem;
   font-weight: 600;
-  opacity: 0.75;
-  font-size: 0.8rem;
+  opacity: 0.8;
+}
+.cta-arrow {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  opacity: 0.85;
+}
+.reset-link {
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.reset-link:hover {
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .demobar-divider {
+    display: none;
+  }
 }
 
 /* ---------- layout ---------- */
